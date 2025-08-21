@@ -3,6 +3,18 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { ModeToggle } from "@/components/pages";
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+  navigationMenuTriggerStyle,
+} from "@/components/ui/navigation-menu";
+import { cn } from "@/lib/utils";
+import { CircleCheckIcon, CircleHelpIcon, CircleIcon } from "lucide-react";
 
 const Header: React.FC = () => {
   const [stickyMenu, setStickyMenu] = useState(false);
@@ -22,10 +34,137 @@ const Header: React.FC = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const menuItems = [
+    {
+      title: "Home",
+      pages: ["home", "personal-blog"],
+      items: [
+        { href: "/", label: "Business Blog", page: "home" },
+        {
+          href: "/personal-blog",
+          label: "Personal Blog",
+          page: "personal-blog",
+        },
+      ],
+    },
+    {
+      title: "Pages",
+      pages: [
+        "category",
+        "about",
+        "author",
+        "search",
+        "privacy-policy",
+        "style-guide",
+        "signin",
+        "signup",
+        "404",
+      ],
+      items: [
+        { href: "/category", label: "Category Page", page: "category" },
+        { href: "/about", label: "About Us", page: "about" },
+        { href: "/author", label: "Author Page", page: "author" },
+        { href: "/search", label: "Search Page", page: "search" },
+        { href: "/signin", label: "Sign In", page: "signin" },
+        { href: "/signup", label: "Sign Up", page: "signup" },
+        {
+          href: "/style-guide",
+          label: "Style Guide Page",
+          page: "style-guide",
+        },
+        {
+          href: "/privacy-policy",
+          label: "Privacy & Policy Page",
+          page: "privacy-policy",
+        },
+        { href: "/404", label: "Error Page", page: "404" },
+      ],
+    },
+    {
+      title: "Blogs",
+      pages: ["blog-single", "blog-single-2", "blog-single-3", "archive"],
+      items: [
+        {
+          href: "/blog-single",
+          label: "Blog Details One",
+          page: "blog-single",
+        },
+        {
+          href: "/blog-single-2",
+          label: "Blog Details Two",
+          page: "blog-single-2",
+        },
+        {
+          href: "/blog-single-3",
+          label: "Blog Details Three",
+          page: "blog-single-3",
+        },
+        { href: "/blog-archive", label: "Blog Archive Page", page: "archive" },
+      ],
+    },
+  ];
+
+  const components: { title: string; href: string; description: string }[] = [
+    {
+      title: "Alert Dialog",
+      href: "/docs/primitives/alert-dialog",
+      description:
+        "A modal dialog that interrupts the user with important content and expects a response.",
+    },
+    {
+      title: "Hover Card",
+      href: "/docs/primitives/hover-card",
+      description:
+        "For sighted users to preview content available behind a link.",
+    },
+    {
+      title: "Progress",
+      href: "/docs/primitives/progress",
+      description:
+        "Displays an indicator showing the completion progress of a task, typically displayed as a progress bar.",
+    },
+    {
+      title: "Scroll-area",
+      href: "/docs/primitives/scroll-area",
+      description: "Visually or semantically separates content.",
+    },
+    {
+      title: "Tabs",
+      href: "/docs/primitives/tabs",
+      description:
+        "A set of layered sections of content—known as tab panels—that are displayed one at a time.",
+    },
+    {
+      title: "Tooltip",
+      href: "/docs/primitives/tooltip",
+      description:
+        "A popup that displays information related to an element when the element receives keyboard focus or the mouse hovers over it.",
+    },
+  ];
+
+  function ListItem({
+    title,
+    children,
+    href,
+    ...props
+  }: React.ComponentPropsWithoutRef<"li"> & { href: string }) {
+    return (
+      <li {...props}>
+        <NavigationMenuLink asChild>
+          <Link href={href}>
+            <div className="text-sm leading-none font-medium">{title}</div>
+            <p className="text-muted-foreground line-clamp-2 text-sm leading-snug">
+              {children}
+            </p>
+          </Link>
+        </NavigationMenuLink>
+      </li>
+    );
+  }
   return (
     <header
-      className={`fixed top-0 left-0 z-[9999] w-full bg-white py-7 transition-all duration-300 ease-in-out lg:py-0 ${
-        stickyMenu ? "py-4 shadow-sm lg:py-0" : ""
+      className={`bg-background fixed top-0 left-0 z-[49] w-full py-7 transition-all duration-300 ease-in-out   ${
+        stickyMenu ? "py-4 shadow-sm lg:py-5" : ""
       }`}
     >
       <div className="relative mx-auto max-w-[1170px] items-center justify-between px-4 sm:px-8 lg:flex xl:px-0">
@@ -83,308 +222,132 @@ const Header: React.FC = () => {
           }`}
         >
           {/* Main Navigation */}
-          <nav>
-            <ul className="flex flex-col gap-5 lg:flex-row lg:items-center lg:gap-10">
-              {/* Home Dropdown */}
-              <li
-                className={`group relative lg:py-6.5 ${stickyMenu ? "lg:py-4" : ""}`}
-              >
-                <button
-                  className={`flex items-center justify-between gap-3 ${
-                    ["personal-blog", "home"].includes(currentPage)
-                      ? "text-gray-800"
-                      : ""
-                  } hover:text-gray-800`}
-                  onClick={() => setHomeDropdown(!homeDropdown)}
-                >
-                  Home
-                  <svg
-                    className="h-3 w-3 cursor-pointer fill-current"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 512 512"
-                  >
-                    <path d="M233.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L256 338.7 86.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z" />
-                  </svg>
-                </button>
-                <ul
-                  className={`mt-2 flex-col gap-2 lg:absolute lg:rounded-md lg:bg-white lg:p-4 lg:shadow-lg ${
-                    homeDropdown ? "flex" : "hidden"
-                  }`}
-                >
-                  <li>
-                    <Link
-                      href="/"
-                      className={`flex rounded-md px-4 py-2 text-sm hover:bg-gray-100 hover:text-blue-600 ${
-                        currentPage === "home"
-                          ? "bg-gray-100 text-blue-600"
-                          : ""
-                      }`}
+          <NavigationMenu viewport={false}>
+            <NavigationMenuList>
+              <NavigationMenuItem>
+                <NavigationMenuTrigger>Home</NavigationMenuTrigger>
+                <NavigationMenuContent>
+                  <ul className="grid gap-2 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
+                    <li className="row-span-3">
+                      <NavigationMenuLink asChild>
+                        <Link
+                          className="from-muted/50 to-muted flex h-full w-full flex-col justify-end rounded-md bg-linear-to-b p-6 no-underline outline-hidden select-none focus:shadow-md"
+                          href="/"
+                        >
+                          <div className="mt-4 mb-2 text-lg font-medium">
+                            shadcn/ui
+                          </div>
+                          <p className="text-muted-foreground text-sm leading-tight">
+                            Beautifully designed components built with Tailwind
+                            CSS.
+                          </p>
+                        </Link>
+                      </NavigationMenuLink>
+                    </li>
+                    <ListItem href="/docs" title="Introduction">
+                      Re-usable components built using Radix UI and Tailwind
+                      CSS.
+                    </ListItem>
+                    <ListItem href="/docs/installation" title="Installation">
+                      How to install dependencies and structure your app.
+                    </ListItem>
+                    <ListItem
+                      href="/docs/primitives/typography"
+                      title="Typography"
                     >
-                      Business Blog
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href="/personal-blog"
-                      className={`flex rounded-md px-4 py-2 text-sm hover:bg-gray-100 hover:text-blue-600 ${
-                        currentPage === "personal-blog"
-                          ? "bg-gray-100 text-blue-600"
-                          : ""
-                      }`}
-                    >
-                      Personal Blog
-                    </Link>
-                  </li>
-                </ul>
-              </li>
+                      Styles for headings, paragraphs, lists...etc
+                    </ListItem>
+                  </ul>
+                </NavigationMenuContent>
+              </NavigationMenuItem>
+              <NavigationMenuItem>
+                <NavigationMenuTrigger>Components</NavigationMenuTrigger>
+                <NavigationMenuContent>
+                  <ul className="grid w-[400px] gap-2 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
+                    {components.map((component) => (
+                      <ListItem
+                        key={component.title}
+                        title={component.title}
+                        href={component.href}
+                      >
+                        {component.description}
+                      </ListItem>
+                    ))}
+                  </ul>
+                </NavigationMenuContent>
+              </NavigationMenuItem>
+              <NavigationMenuItem>
+                <NavigationMenuLink
+                  asChild
+                  className={navigationMenuTriggerStyle()}
+                >
+                  <Link href="/docs">Docs</Link>
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+              <NavigationMenuItem>
+                <NavigationMenuTrigger>List</NavigationMenuTrigger>
+                <NavigationMenuContent>
+                  <ul className="grid w-[300px] gap-4">
+                    <li>
+                      <NavigationMenuLink asChild>
+                        <Link href="#">
+                          <div className="font-medium">Components</div>
+                          <div className="text-muted-foreground">
+                            Browse all components in the library.
+                          </div>
+                        </Link>
+                      </NavigationMenuLink>
+                      <NavigationMenuLink asChild>
+                        <Link href="#">
+                          <div className="font-medium">Documentation</div>
+                          <div className="text-muted-foreground">
+                            Learn how to use the library.
+                          </div>
+                        </Link>
+                      </NavigationMenuLink>
+                      <NavigationMenuLink asChild>
+                        <Link href="#">
+                          <div className="font-medium">Blog</div>
+                          <div className="text-muted-foreground">
+                            Read our latest blog posts.
+                          </div>
+                        </Link>
+                      </NavigationMenuLink>
+                    </li>
+                  </ul>
+                </NavigationMenuContent>
+              </NavigationMenuItem>
+              <NavigationMenuItem>
+                <NavigationMenuTrigger>Simple</NavigationMenuTrigger>
+                <NavigationMenuContent>
+                  <ul className="grid w-[200px] gap-4">
+                    <li>
+                      <NavigationMenuLink asChild>
+                        <Link href="#">Components</Link>
+                      </NavigationMenuLink>
+                      <NavigationMenuLink asChild>
+                        <Link href="#">Documentation</Link>
+                      </NavigationMenuLink>
+                      <NavigationMenuLink asChild>
+                        <Link href="#">Blocks</Link>
+                      </NavigationMenuLink>
+                    </li>
+                  </ul>
+                </NavigationMenuContent>
+              </NavigationMenuItem>
 
-              {/* Pages Dropdown */}
-              <li
-                className={`group relative lg:py-6.5 ${stickyMenu ? "lg:py-4" : ""}`}
-              >
-                <button
-                  className={`flex items-center justify-between gap-3 ${
-                    [
-                      "category",
-                      "about",
-                      "author",
-                      "search",
-                      "privacy-policy",
-                      "style-guide",
-                      "signin",
-                      "signup",
-                      "404",
-                    ].includes(currentPage)
-                      ? "text-gray-800"
-                      : ""
-                  } hover:text-gray-800`}
-                  onClick={() => setPagesDropdown(!pagesDropdown)}
-                >
-                  Pages
-                  <svg
-                    className="h-3 w-3 cursor-pointer fill-current"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 512 512"
-                  >
-                    <path d="M233.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L256 338.7 86.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z" />
-                  </svg>
-                </button>
-                <ul
-                  className={`mt-2 flex-col gap-2 lg:absolute lg:rounded-md lg:bg-white lg:p-4 lg:shadow-lg ${
-                    pagesDropdown ? "flex" : "hidden"
-                  }`}
-                >
-                  <li>
-                    <Link
-                      href="/category"
-                      className={`flex rounded-md px-4 py-2 text-sm hover:bg-gray-100 hover:text-blue-600 ${
-                        currentPage === "category"
-                          ? "bg-gray-100 text-blue-600"
-                          : ""
-                      }`}
-                    >
-                      Category Page
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href="/about"
-                      className={`flex rounded-md px-4 py-2 text-sm hover:bg-gray-100 hover:text-blue-600 ${
-                        currentPage === "about"
-                          ? "bg-gray-100 text-blue-600"
-                          : ""
-                      }`}
-                    >
-                      About Us
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href="/author"
-                      className={`flex rounded-md px-4 py-2 text-sm hover:bg-gray-100 hover:text-blue-600 ${
-                        currentPage === "author"
-                          ? "bg-gray-100 text-blue-600"
-                          : ""
-                      }`}
-                    >
-                      Author Page
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href="/search"
-                      className={`flex rounded-md px-4 py-2 text-sm hover:bg-gray-100 hover:text-blue-600 ${
-                        currentPage === "search"
-                          ? "bg-gray-100 text-blue-600"
-                          : ""
-                      }`}
-                    >
-                      Search Page
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href="/signin"
-                      className={`flex rounded-md px-4 py-2 text-sm hover:bg-gray-100 hover:text-blue-600 ${
-                        currentPage === "signin"
-                          ? "bg-gray-100 text-blue-600"
-                          : ""
-                      }`}
-                    >
-                      Sign In
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href="/signup"
-                      className={`flex rounded-md px-4 py-2 text-sm hover:bg-gray-100 hover:text-blue-600 ${
-                        currentPage === "signup"
-                          ? "bg-gray-100 text-blue-600"
-                          : ""
-                      }`}
-                    >
-                      Sign Up
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href="/style-guide"
-                      className={`flex rounded-md px-4 py-2 text-sm hover:bg-gray-100 hover:text-blue-600 ${
-                        currentPage === "style-guide"
-                          ? "bg-gray-100 text-blue-600"
-                          : ""
-                      }`}
-                    >
-                      Style Guide Page
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href="/privacy-policy"
-                      className={`flex rounded-md px-4 py-2 text-sm hover:bg-gray-100 hover:text-blue-600 ${
-                        currentPage === "privacy-policy"
-                          ? "bg-gray-100 text-blue-600"
-                          : ""
-                      }`}
-                    >
-                      Privacy & Policy Page
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href="/404"
-                      className={`flex rounded-md px-4 py-2 text-sm hover:bg-gray-100 hover:text-blue-600 ${
-                        currentPage === "404" ? "bg-gray-100 text-blue-600" : ""
-                      }`}
-                    >
-                      Error Page
-                    </Link>
-                  </li>
-                </ul>
-              </li>
-
-              {/* Blogs Dropdown */}
-              <li
-                className={`group relative lg:py-6.5 ${stickyMenu ? "lg:py-4" : ""}`}
-              >
-                <button
-                  className={`flex items-center justify-between gap-3 ${
-                    [
-                      "blog-single",
-                      "blog-single-2",
-                      "blog-single-3",
-                      "archive",
-                    ].includes(currentPage)
-                      ? "text-gray-800"
-                      : ""
-                  } hover:text-gray-800`}
-                  onClick={() => setBlogsDropdown(!blogsDropdown)}
-                >
-                  Blogs
-                  <svg
-                    className="h-3 w-3 cursor-pointer fill-current"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 512 512"
-                  >
-                    <path d="M233.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L256 338.7 86.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z" />
-                  </svg>
-                </button>
-                <ul
-                  className={`mt-2 flex-col gap-2 lg:absolute lg:rounded-md lg:bg-white lg:p-4 lg:shadow-lg ${
-                    blogsDropdown ? "flex" : "hidden"
-                  }`}
-                >
-                  <li>
-                    <Link
-                      href="/blog-single"
-                      className={`flex rounded-md px-4 py-2 text-sm hover:bg-gray-100 hover:text-blue-600 ${
-                        currentPage === "blog-single"
-                          ? "bg-gray-100 text-blue-600"
-                          : ""
-                      }`}
-                    >
-                      Blog Details One
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href="/blog-single-2"
-                      className={`flex rounded-md px-4 py-2 text-sm hover:bg-gray-100 hover:text-blue-600 ${
-                        currentPage === "blog-single-2"
-                          ? "bg-gray-100 text-blue-600"
-                          : ""
-                      }`}
-                    >
-                      Blog Details Two
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href="/blog-single-3"
-                      className={`flex rounded-md px-4 py-2 text-sm hover:bg-gray-100 hover:text-blue-600 ${
-                        currentPage === "blog-single-3"
-                          ? "bg-gray-100 text-blue-600"
-                          : ""
-                      }`}
-                    >
-                      Blog Details Three
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href="/blog-archive"
-                      className={`flex rounded-md px-4 py-2 text-sm hover:bg-gray-100 hover:text-blue-600 ${
-                        currentPage === "archive"
-                          ? "bg-gray-100 text-blue-600"
-                          : ""
-                      }`}
-                    >
-                      Blog Archive Page
-                    </Link>
-                  </li>
-                </ul>
-              </li>
-
-              {/* Support Link */}
-              <li
-                className={`nav__menu lg:py-6.5 ${stickyMenu ? "lg:py-4" : ""}`}
-              >
-                <Link href="/signin" className="hover:text-gray-800">
-                  Support
-                </Link>
-              </li>
-            </ul>
-          </nav>
-
+            </NavigationMenuList>
+          </NavigationMenu>
           {/* Nav Right */}
           <div className="mt-7 flex flex-wrap items-center gap-8.5 lg:mt-0">
             {/* Social Links */}
+            {/*
             <div className="flex items-center gap-1.5">
-              <a
+              <Link
                 id="facebookBtn"
                 aria-label="facebook social link"
                 href="#"
-                className="flex h-[30px] w-[30px] items-center justify-center rounded-full hover:bg-gray-100 hover:text-gray-800 lg:transition-all lg:duration-200"
+                className="flex h-[30px] w-[30px] items-center justify-center rounded-full hover:bg-gray-100 hover:opacity-100 lg:transition-all lg:duration-200"
               >
                 <svg
                   className="fill-current"
@@ -396,12 +359,12 @@ const Header: React.FC = () => {
                 >
                   <path d="M10.4 8.58585V6.07664C10.4 5.10529 11.2059 4.31785 12.2 4.31785H14V1.67966L11.5565 1.50912C9.47255 1.36368 7.7 2.97636 7.7 5.01777V8.58585H5V11.224H7.7V16.5H10.4V11.224H13.1L14 8.58585H10.4Z" />
                 </svg>
-              </a>
-              <a
+              </Link>
+              <Link
                 id="twitterBtn"
                 aria-label="twitter social link"
                 href="#"
-                className="flex h-[30px] w-[30px] items-center justify-center rounded-full hover:bg-gray-100 hover:text-gray-800 lg:transition-all lg:duration-200"
+                className="flex h-[30px] w-[30px] items-center justify-center rounded-full hover:bg-gray-100 hover:opacity-100 lg:transition-all lg:duration-200"
               >
                 <svg
                   className="fill-current"
@@ -425,12 +388,12 @@ const Header: React.FC = () => {
                     </clipPath>
                   </defs>
                 </svg>
-              </a>
-              <a
+              </Link>
+              <Link
                 id="linkedinBtn"
                 aria-label="linkedin social link"
                 href="#"
-                className="flex h-[30px] w-[30px] items-center justify-center rounded-full hover:bg-gray-100 hover:text-gray-800 lg:transition-all lg:duration-200"
+                className="flex h-[30px] w-[30px] items-center justify-center rounded-full hover:bg-gray-100 hover:opacity-100 lg:transition-all lg:duration-200"
               >
                 <svg
                   className="fill-current"
@@ -442,12 +405,12 @@ const Header: React.FC = () => {
                 >
                   <path d="M5.50004 3.50068C5.49976 4.11141 5.12924 4.661 4.56318 4.89028C3.99713 5.11957 3.34858 4.98277 2.92335 4.54439C2.49812 4.10601 2.38114 3.45359 2.62755 2.89478C2.87397 2.33597 3.43458 1.98236 4.04504 2.00068C4.85584 2.02502 5.5004 2.68951 5.50004 3.50068ZM5.54504 6.11068H2.54504V15.5007H5.54504V6.11068ZM10.2851 6.11068H7.30004V15.5007H10.2551V10.5732C10.2551 7.82816 13.8326 7.57316 13.8326 10.5732V15.5007H16.7951V9.55316C16.7951 4.92568 11.5001 5.09818 10.2551 7.37066L10.2851 6.11068Z" />
                 </svg>
-              </a>
-              <a
+              </Link>
+              <Link
                 id="pinterestBtn"
                 aria-label="pinterest social link"
                 href="#"
-                className="flex h-[30px] w-[30px] items-center justify-center rounded-full hover:bg-gray-100 hover:text-gray-800 lg:transition-all lg:duration-200"
+                className="flex h-[30px] w-[30px] items-center justify-center rounded-full hover:bg-gray-100 hover:opacity-100 lg:transition-all lg:duration-200"
               >
                 <svg
                   className="fill-current"
@@ -459,16 +422,16 @@ const Header: React.FC = () => {
                 >
                   <path d="M1.00623 9.02818C1.06248 11.6438 2.27186 14.2594 4.32497 15.8344C4.97185 16.3126 5.67497 16.5938 6.40622 16.9032C6.09685 14.9063 6.85622 12.9094 7.2781 10.9407C7.33435 10.7438 7.36247 10.5188 7.36247 10.2938C7.36247 9.98443 7.24997 9.67505 7.1656 9.36568C7.08122 8.85943 7.13747 8.32505 7.36247 7.84693C7.67185 7.20005 8.4031 6.6938 9.04997 6.94693C9.6406 7.17193 9.8656 7.95943 9.7531 8.57818C9.6406 9.22505 9.3031 9.78755 9.13435 10.4063C8.93747 11.0251 8.9656 11.7844 9.4156 12.2063C9.83747 12.6001 10.5125 12.6282 11.0468 12.4032C11.8343 12.0657 12.3406 11.2782 12.65 10.4907C13.2125 9.02818 13.1 7.17193 11.9468 6.10318C11.4687 5.62505 10.7937 5.31568 10.0625 5.20318C8.82497 5.0063 7.47497 5.37193 6.6031 6.27193C5.73122 7.17193 5.33747 8.55005 5.7031 9.7313C5.8156 10.1251 6.0406 10.5188 6.12497 10.9126C6.20935 11.3063 6.18122 11.8126 5.89997 12.0938C5.87185 12.1219 5.84372 12.1501 5.78747 12.1782C5.73122 12.2063 5.64685 12.1501 5.5906 12.1219C5.05622 11.7844 4.63435 11.2501 4.38122 10.6876C3.59372 8.97193 3.98747 6.83443 5.22497 5.42818C6.46247 4.02193 8.45935 3.34693 10.3156 3.60005C12.0593 3.82505 13.775 4.86568 14.5062 6.4688C14.9562 7.42505 15.0406 8.52193 14.8718 9.56255C14.7031 10.6313 14.2812 11.6438 13.5781 12.4594C12.875 13.2751 11.8625 13.8376 10.7937 13.8938C9.92185 13.9501 8.99372 13.6407 8.54372 12.9094C8.26247 14.4282 7.7281 15.9188 6.9406 17.2407C6.91247 17.2969 8.7406 17.6907 8.90935 17.6907C10.9906 17.8594 13.2125 17.0438 14.8437 15.7501C19.3437 12.1782 18.8656 5.3438 14.4218 1.96881C12.1156 0.196933 9.38747 -0.140567 6.68747 0.815684C5.87185 1.09693 5.11247 1.57506 4.40935 2.08131C3.28436 2.92505 2.38436 4.02193 1.79373 5.28755C1.20311 6.44068 0.978106 7.73443 1.00623 9.02818Z" />
                 </svg>
-              </a>
+              </Link>
             </div>
-
+*/}
             {/* Button Links */}
             <div className="flex items-center gap-4.5">
-              <button
+              {/* <button
                 id="searchModalButton"
                 aria-label="button for modal open"
                 onClick={() => setModalSearch(true)}
-                className="flex h-11 w-11 items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 hover:text-gray-800 lg:transition-all lg:duration-200 lg:ease-linear"
+                className="flex h-11 w-11 items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 hover:opacity-100 lg:transition-all lg:duration-200 lg:ease-linear"
               >
                 <svg
                   className="fill-current"
@@ -480,7 +443,8 @@ const Header: React.FC = () => {
                 >
                   <path d="M19.1875 17.4063L14.0313 13.2188C16.1563 10.3125 15.9375 6.15625 13.2812 3.53125C11.875 2.125 10 1.34375 8 1.34375C6 1.34375 4.125 2.125 2.71875 3.53125C-0.1875 6.4375 -0.1875 11.1875 2.71875 14.0938C4.125 15.5 6 16.2813 8 16.2813C9.90625 16.2813 11.6875 15.5625 13.0938 14.2813L18.3125 18.5C18.4375 18.5938 18.5938 18.6563 18.75 18.6563C18.9688 18.6563 19.1562 18.5625 19.2812 18.4063C19.5312 18.0938 19.5 17.6563 19.1875 17.4063ZM8 14.875C6.375 14.875 4.875 14.25 3.71875 13.0938C1.34375 10.7188 1.34375 6.875 3.71875 4.53125C4.875 3.375 6.375 2.75 8 2.75C9.625 2.75 11.125 3.375 12.2812 4.53125C14.6562 6.90625 14.6562 10.75 12.2812 13.0938C11.1562 14.25 9.625 14.875 8 14.875Z" />
                 </svg>
-              </button>
+              </button>*/}
+              <ModeToggle />
               <button
                 onClick={() => setModalNewsletter(true)}
                 className="flex rounded-md bg-gray-800 px-5.5 py-2.5 font-medium text-white hover:opacity-90 lg:transition-all lg:duration-200 lg:ease-linear"
